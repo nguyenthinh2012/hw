@@ -41,7 +41,7 @@ public static int[][] c = new int[5][10000];
 				int temp = h.hash_fun(a[i],b[i],p,k);
 				c[i][temp]++;							//update value of matrix c with number in stream
 			}
-			t++;
+			
 		}
 		sn.close();
 		ArrayList<word> WordFe = new ArrayList();
@@ -61,6 +61,7 @@ public static int[][] c = new int[5][10000];
 			w.error = err;
 			w.wordfe =  fe/t;
 			WordFe.add(w);
+			t++;
 		}
 		sn.close();
 		PrintWriter pw =new PrintWriter(new FileWriter("D:\\out.txt"));
