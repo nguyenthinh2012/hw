@@ -1,15 +1,21 @@
 import numpy as np
 import matplotlib.pyplot as plot
-def hash_fun(a,b,n_buckets,x):
+#hash function
+def hash_fun(a,b,n_buckets,x): 
     p = 123457
     y = x % p
     hash_val = (a * y + b) % p
     return hash_val % n_buckets
+#matrix C : column is bucket, row is hash value of words in stream
 cArray = np.zeros((5,10000))
+#hash params
 a = []
 b = []
+#Relative Error
 E = []
+#Exact Word Frequency
 WFe = []
+#read parameter of hash
 with open('D:/HW4-q4/hash_params.txt','r') as f:
     for line in f:
         lineArr = line.split()
@@ -17,6 +23,7 @@ with open('D:/HW4-q4/hash_params.txt','r') as f:
         b.append(int(lineArr[1]))
 f.close()
 t = 0
+#compute(update) matrix C with one word in stream
 f = open('D:/HW4-q4/words_stream_tiny.txt','r')
 for line in f:
         lineTemp = line.split()
@@ -25,7 +32,8 @@ for line in f:
         for i in range(5):
                 cArray[i][hash_fun(a[i],b[i],10000,streamNumber)] += 1
 f.close()
-print ('read data done')
+print ('read data and compute done')
+#read exact frequencies F[i] of one word
 f = open('D:/HW4-q4/counts_tiny.txt','r')
 for line in f:
         lineTemp = line.split()
