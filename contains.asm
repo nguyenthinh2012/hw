@@ -13,12 +13,13 @@ section .data
 	lenInput: dd 0
 	check: dd 0
 	index: dd 0
-	space: db " "
+	space: dd " "
 	enter: db 10
 	strSum: db "tong so vi tri tim thay: "
 	sumLen equ $ -strSum
 	strVitri: db "tai cac vi tri: "
 	strVitriLen equ $ - strVitri
+	array: times 100 dd 0
 section .bss
 section .text
 _start:
@@ -74,10 +75,23 @@ _start:
 	mov eax, [lenFindStr]
 	cmp DWORD [indexInFind], eax
 	je .push
+	mov eax, [indexInFind]
+	cmp eax, 2
+	ja .loopx
+.temp:
 	mov edi, fStr
 	mov DWORD [indexInFind], 1
 	mov DWORD [check],0
 	jmp .find
+.loopx:
+	cmp DWORD [lenFindStr], 2
+	je .temp
+	dec esi
+	dec DWORD [indexInInput]
+	sub eax, 1
+	cmp eax, 2
+	ja .loopx
+	jmp .temp
 .bothInc:
 	inc esi
 	inc edi
@@ -87,20 +101,11 @@ _start:
 	jmp .find
 .push:
 	mov eax, [indexInInput]
-	mov DWORD [index], eax
-	mov eax, [index]
 	sub DWORD eax, [lenFindStr]
 	push eax
-	mov edi, fStr
-	mov DWORD [indexInFind] ,1 
-	mov DWORD [check],0
-	inc DWORD [count]	
-        mov ecx, [lenFindStr]
-        sub ecx, 1
-        .loopback:
-            inc esi
-        loop .loopback
-	jmp .find
+	inc DWORD [count]
+	mov eax, [lenFindStr]
+	jmp .loopx
 .print:
 	mov eax, 4
 	mov ebx, 1
@@ -125,24 +130,37 @@ _start:
 	mov ecx, strVitri
 	mov edx, strVitriLen
 	int 80h
+	mov esi, array
+	mov DWORD eax, [count]
+	mov DWORD [check], eax
+	add dword[check], eax
+
 .print2:
 	cmp DWORD [count], 0
-	je .exit
+	je .back
 	sub DWORD [count],1
 	pop eax
 	add eax, '0'
-	mov [index], eax
-	mov eax, 4
-	mov ebx,1
-	mov ecx, index
-	mov edx,1
-	int 80h
+	mov [esi], eax
+	add esi, 4
+	mov eax, [space]
+	mov [esi], eax
+	add esi, 4
+	jmp .print2
+	mov esi, array
+.back:
+	cmp DWORD [check], 0
+	je .exit
+	sub esi, 4
+	mov eax, [esi]
+	mov DWORD [index], eax
 	mov eax, 4
 	mov ebx, 1
-	mov ecx, space
-	mov edx,1
+	mov ecx, index
+	mov edx, 1
 	int 80h
-	jmp .print2
+	dec DWORD [check]
+	jmp .back
 .exit:
 	mov eax, 4
 	mov ebx, 1
